@@ -1,0 +1,42 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: kt-webapp-hotreload-deployment
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: kt-webapp-hotreload
+        appgroup: kt-webapp
+    spec:
+      containers:
+        - name: webapp
+          image: kt-webapp-hotreload
+          imagePullPolicy: IfNotPresent
+          ports:
+          - containerPort: 80
+          volumeMounts:
+          - mountPath: /app/src
+            name: src
+      volumes:
+      - name: src
+        hostPath:
+          path: {{JSDIR}}/src
+---
+# Service to make the webapp available on a fixed port on each node; this
+# allows the load balancer to provide access from the outside.
+kind: Service
+apiVersion: v1
+metadata:
+  name: kt-webapp-hotreload
+  labels:
+    appgroup: kt-webapp
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 31001
+  type: NodePort
+  selector:
+    app: kt-webapp-hotreload

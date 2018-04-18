@@ -1,0 +1,35 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: kt-webapp-deployment
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: kt-webapp
+        appgroup: kt-webapp
+    spec:
+      containers:
+        - name: webapp
+          image: kt-webapp
+          imagePullPolicy: IfNotPresent
+          ports:
+          - containerPort: 8080
+---
+# Service to make the webapp available on a fixed port on each node; this
+# allows the load balancer to provide access from the outside.
+kind: Service
+apiVersion: v1
+metadata:
+  name: kt-webapp
+  labels:
+    appgroup: kt-webapp
+spec:
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: 31000
+  type: NodePort
+  selector:
+    app: kt-webapp
