@@ -1,6 +1,7 @@
 import io.ktor.application.*
 import io.ktor.content.*
 import io.ktor.http.*
+import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.server.engine.*
@@ -58,8 +59,10 @@ class PuppiesFetcher : DataFetcher<Any> {
     }
 }
 
+class GraphQLRequest(val operationName: String, val query: String)
+
 fun Routing.api() {
-    get("/graphql") {
+    post("/graphql") {
         var schemaParser = SchemaParser()
         var typeDefinitionRegistry = schemaParser.parse(SCHEMA)
         var runtimeWiring = RuntimeWiring.newRuntimeWiring()
@@ -74,8 +77,9 @@ fun Routing.api() {
             typeDefinitionRegistry, runtimeWiring)
 
         var build = GraphQL.newGraphQL(graphQLSchema).build()
-        var executionResult = build.execute(
-            call.request.queryParameters.get("query"))
+
+        var request : GraphQLRequest = call.receive()
+        var executionResult = build.execute(request.query)
 
         call.respond(executionResult.toSpecification())
     }
