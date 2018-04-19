@@ -13,4 +13,8 @@ start-dev: build
 	kubectl create -f ./deployment/nginx-controller.yaml
 	cat ./deployment/kt-webapp-hotreload.yaml | sed -e 's|{{JSDIR}}|${JSDIR}|g' | kubectl apply -f -
 
+stop:
+	kubectl config use-context docker-for-desktop
+	kubectl delete deployment,service,ingress -l appgroup=kt-webapp
+
 DUMMY:
