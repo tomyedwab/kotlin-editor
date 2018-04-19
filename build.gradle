@@ -20,7 +20,7 @@ apply plugin: 'kotlin'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'application'
 
-mainClassName = 'MainKt'
+mainClassName = 'ktwebapp.MainKt'
 
 sourceCompatibility = 1.8
 compileKotlin { kotlinOptions.jvmTarget = "1.8" }
