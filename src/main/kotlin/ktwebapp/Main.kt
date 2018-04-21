@@ -11,6 +11,8 @@ import io.ktor.server.netty.*
 import io.ktor.features.ContentNegotiation
 import io.ktor.gson.*
 
+import graphql.ExecutionInput
+
 import ktwebapp.GraphQLRequest
 import ktwebapp.GraphQLServer
 
@@ -27,6 +29,9 @@ fun main(args: Array<String>) {
             static("/") {
                 default("static/index.html")
             }
+            static("/images") {
+                files("static/images")
+            }
             api(queryServer)
         }
     }
@@ -35,7 +40,7 @@ fun main(args: Array<String>) {
 
 fun Routing.api(queryServer : GraphQLServer) {
     post("/graphql") {
-        var request : GraphQLRequest = call.receive()
+        var request : ExecutionInput = call.receive()
         var result = queryServer.runQuery(request)
         call.respond(result.toSpecification())
     }

@@ -3,9 +3,11 @@ package ktwebapp
 import graphql.GraphQL
 import graphql.schema.idl.*
 import graphql.ExecutionResult
+import graphql.ExecutionInput
 
-import ktwebapp.PuppiesFetcher
+import ktwebapp.Puppies
 
+// TODO: Test that this is actually a valid schema at build time
 val SCHEMA = """
 type Puppy {
     id: String
@@ -16,17 +18,31 @@ type Puppy {
 type Query {
     puppies: [Puppy]
 }
+
+type Mutation {
+    addPuppy(name: String!, url: String!): Puppy
+    deletePuppy(id: String!): Puppy
+}
 """
 
-class GraphQLRequest(val operationName: String, val query: String)
+class GraphQLRequest(
+    val operationName: String,
+    val query: String,
+    val variables: HashMap<String, String>)
 
 class GraphQLServer() {
+    var puppies = Puppies()
     var schemaParser = SchemaParser()
     var typeDefinitionRegistry = schemaParser.parse(SCHEMA)
     var runtimeWiring = RuntimeWiring.newRuntimeWiring()
         .type("Query", {
             builder ->
-            builder.dataFetcher("puppies", PuppiesFetcher())
+            builder.dataFetcher("puppies", puppies.ListPuppies())
+        })
+        .type("Mutation", {
+            builder ->
+            builder.dataFetcher("addPuppy", puppies.AddPuppy())
+            builder.dataFetcher("deletePuppy", puppies.DeletePuppy())
         })
         .build()
 
@@ -36,7 +52,7 @@ class GraphQLServer() {
 
     var build = GraphQL.newGraphQL(graphQLSchema).build()
 
-    fun runQuery(request : GraphQLRequest) : ExecutionResult {
-        return build.execute(request.query)
+    fun runQuery(request : ExecutionInput) : ExecutionResult {
+        return build.execute(request)
     }
 }

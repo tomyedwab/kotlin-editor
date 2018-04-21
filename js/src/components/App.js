@@ -9,7 +9,7 @@ class App extends React.Component {
     return (
       <ApolloProvider client={this.props.client}>
         <div style={{ textAlign: 'center' }}>
-          <h1>Hello, Kotlin and React!</h1>
+          <h1>Cute puppies!</h1>
           <Puppies />
         </div>
       </ApolloProvider>
