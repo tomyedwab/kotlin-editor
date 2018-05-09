@@ -3,11 +3,17 @@ package ktwebapp
 import graphql.schema.DataFetcher
 import graphql.schema.DataFetchingEnvironment
 
+interface Puppies {
+   fun getListPuppies() : DataFetcher<Any>
+   fun getAddPuppy() : DataFetcher<Any>
+   fun getDeletePuppy() : DataFetcher<Any>
+}
+
 class Puppy(val id: String, val name: String, val url: String)
 
 fun randomID() = java.util.UUID.randomUUID().toString()
 
-class Puppies {
+class PuppiesImpl : Puppies {
     val puppiesList = arrayListOf(
         Puppy(randomID(), "Homer", "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Szczenie_Jack_Russell_Terrier3.jpg/1280px-Szczenie_Jack_Russell_Terrier3.jpg"),
         Puppy(randomID(), "Erica", "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Puppy_on_Halong_Bay.jpg/2560px-Puppy_on_Halong_Bay.jpg"),
@@ -19,6 +25,7 @@ class Puppies {
             return puppiesList
         }
     }
+    override fun getListPuppies() = ListPuppies()
 
     inner class AddPuppy : DataFetcher<Any> {
         override fun get(environment: DataFetchingEnvironment) : Puppy {
@@ -30,6 +37,7 @@ class Puppies {
             return newPuppy
         }
     }
+    override fun getAddPuppy() = AddPuppy()
 
     inner class DeletePuppy : DataFetcher<Any> {
         override fun get(environment: DataFetchingEnvironment) : Puppy {
@@ -49,4 +57,5 @@ class Puppies {
             return pupToRemove
         }
     }
+    override fun getDeletePuppy() = DeletePuppy()
 }
