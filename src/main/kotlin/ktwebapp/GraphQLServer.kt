@@ -5,9 +5,6 @@ import graphql.schema.idl.*
 import graphql.ExecutionResult
 import graphql.ExecutionInput
 
-import org.koin.standalone.KoinComponent
-import org.koin.standalone.inject
-
 interface GraphQLServerInterface {
     fun runQuery(request : ExecutionInput) : ExecutionResult
 }
@@ -35,9 +32,7 @@ data class GraphQLRequest(
     val query: String,
     val variables: HashMap<String, String>)
 
-class GraphQLServer() : KoinComponent, GraphQLServerInterface {
-    private val puppies : Puppies by inject()
-
+class GraphQLServer(private val puppies : Puppies) : GraphQLServerInterface {
     private val schemaParser = SchemaParser()
     private val typeDefinitionRegistry = schemaParser.parse(SCHEMA)
     private val runtimeWiring = RuntimeWiring.newRuntimeWiring()

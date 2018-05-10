@@ -10,14 +10,9 @@ import io.ktor.server.netty.*
 import io.ktor.features.ContentNegotiation
 import io.ktor.gson.*
 
-import org.koin.standalone.KoinComponent
-import org.koin.standalone.inject
-
 import graphql.ExecutionInput
 
-class ServerApp : KoinComponent {
-    private val queryServer : GraphQLServerInterface by inject()
-
+class ServerApp(private val queryServer : GraphQLServerInterface) {
     private val server = embeddedServer(Netty, port = 8080) {
         install(ContentNegotiation) {
             gson {
