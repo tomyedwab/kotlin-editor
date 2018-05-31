@@ -4,7 +4,7 @@ import org.koin.Koin
 import org.koin.dsl.module.*
 import org.koin.standalone.StandAloneContext.startKoin
 
-val appModule = applicationContext {
+private val appModule = applicationContext {
     bean { ServerApp(get()) }
     bean { GraphQLServer(get()) as GraphQLServerInterface }
     bean { PuppiesImpl() as Puppies }

@@ -7,6 +7,7 @@ COPY gradle /build/gradle
 RUN ./gradlew build --continue
 
 COPY src /build/src
+COPY test /build/test
 RUN ./gradlew build
 
 FROM openjdk:8-jre-alpine
