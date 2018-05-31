@@ -74,4 +74,50 @@ class GraphQLServerTest : KoinTest {
         assertThat(response["puppies"]?.get(1)?.get("name")).isEqualTo("Puppy2")
         assertThat(response["puppies"]?.get(1)?.get("url")).isEqualTo("Url2")
     }
+
+    @Test fun `can add a puppy`() {
+        val query = ExecutionInput( """
+            mutation AddPuppy(${'$'}name: String!, ${'$'}url: String!) {
+              addPuppy(name: ${'$'}name, url: ${'$'}url) {
+                id
+                name
+                url
+              }
+            }
+            """, null, null, null,
+            hashMapOf("name" to "Puppy1", "url" to "Url1") as HashMap<String, Any>)
+
+        whenever(puppiesMock.addPuppy("Puppy1", "Url1")).thenReturn(
+            Puppy("Id1", "Puppy1", "Url1")
+        )
+
+        val server = ctx.koinContext.get<GraphQLServerInterface>()
+        val response : LinkedHashMap<String, LinkedHashMap<String, Any>> = server.runQuery(query).getData()
+        assertThat(response["addPuppy"]?.get("id")).isEqualTo("Id1")
+        assertThat(response["addPuppy"]?.get("name")).isEqualTo("Puppy1")
+        assertThat(response["addPuppy"]?.get("url")).isEqualTo("Url1")
+    }
+
+    @Test fun `can delete a puppy`() {
+        val query = ExecutionInput( """
+            mutation DeletePuppy(${'$'}id: String!) {
+              deletePuppy(id: ${'$'}id) {
+                id
+                name
+                url
+              }
+            }
+            """, null, null, null,
+                hashMapOf("id" to "Id1") as HashMap<String, Any>)
+
+        whenever(puppiesMock.deletePuppy("Id1")).thenReturn(
+            Puppy("Id1", "Puppy1", "Url1")
+        )
+
+        val server = ctx.koinContext.get<GraphQLServerInterface>()
+        val response : LinkedHashMap<String, LinkedHashMap<String, Any>> = server.runQuery(query).getData()
+        assertThat(response["deletePuppy"]?.get("id")).isEqualTo("Id1")
+        assertThat(response["deletePuppy"]?.get("name")).isEqualTo("Puppy1")
+        assertThat(response["deletePuppy"]?.get("url")).isEqualTo("Url1")
+    }
 }
