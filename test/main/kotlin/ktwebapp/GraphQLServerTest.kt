@@ -2,8 +2,6 @@ package ktwebapp
 
 import com.nhaarman.mockito_kotlin.*
 import graphql.ExecutionInput
-import graphql.schema.DataFetcher
-import graphql.schema.DataFetchingEnvironment
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
