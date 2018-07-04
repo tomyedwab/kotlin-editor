@@ -17,6 +17,7 @@ class ServerApp(private val queryServer : GraphQLServerInterface) {
         install(ContentNegotiation) {
             gson {
                 // Configure Gson here
+                serializeNulls()
             }
         }
 
